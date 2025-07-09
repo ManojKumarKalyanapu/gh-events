@@ -1,0 +1,65 @@
+1. Events — What Triggers a Workflow?
+Events are specific activities in a GitHub repository that trigger workflows.
+
+Common Events:
+Event	Triggered When
+push: A commit is pushed to a branch.
+pull_request: A pull request is opened, synced, reopened, or closed.
+issues: An issue is opened, edited, closed, etc.
+release: A release is created, edited, or deleted.
+workflow_dispatch: A workflow is manually triggered.
+schedule: Triggered on a time schedule (cron).
+workflow_run: Triggered after another workflow finishes.
+
+2. Activity Types (for events):
+Some events support activity types to fine-tune when a workflow runs.
+Example: pull_request Activity Types
+on:
+  pull_request:
+    types: [opened, reopened, closed, synchronize]
+
+Activity-Type	Description
+opened: When PR is created.
+closed: When PR is closed (merged or not).
+reopened: When PR is reopened.
+synchronize: When a commit is pushed to the PR branch.
+assigned, unassigned, labeled, unlabeled, etc.: For PR or issue changes.
+
+3. Filters — Run Workflows Conditionally
+A. Branch Filters
+on:
+  push:
+    branches: [main, dev]
+
+B. Tag Filters
+on:
+  push:
+    tags: ['v*']
+
+C. Path Filters (Only run if certain files change)
+on:
+  push:
+    paths:
+      - 'src/**'
+      - '!docs/**'   # ignore changes in docs folder
+
+
+4. if: Condition (Per step or job)
+You can add an if: to run a step/job conditionally based on context.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run only on main branch
+        if: github.ref == 'refs/heads/main'
+        run: echo "Running on main"
+
+
+Summary Table:
+| Feature     | Purpose                        | Example                       |
+| ----------- | ------------------------------ | ----------------------------- |
+| `on:`       | Event trigger                  | `on: push`                    |
+| `types:`    | Filter activity types          | `types: [opened, closed]`     |
+| `branches:` | Limit to specific branches     | `branches: [main, dev]`       |
+| `paths:`    | Trigger on file changes        | `paths: ['src/**']`           |
+| `if:`       | Conditional step/job execution | `if: github.actor == 'manoj'` |
