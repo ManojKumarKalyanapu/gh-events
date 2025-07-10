@@ -3,7 +3,20 @@ on:
   pull_request:
     types:
       - opened
+    branches:
+      - main
+      - "dev-*" # dev-new dev-this-is-new
+      - "feat/**" # feat/new-feature feat/this-is-a-feature
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - "dev-*" # dev-new dev-this-is-new
+      - "feat/**" # feat/new-feature feat/this-is-a-feature
+    paths-ignore:
+      - ".github/workflows/demo1.yml" # Ignore changes to this workflow file
+      - ".github/workflows/*" # Ignore changes to any workflow file
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -11,7 +24,7 @@ jobs:
       - name: Output event data
         run: echo "${{ toJSON(github.event) }}"
       - name: Get code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: npm ci
       - name: Test code

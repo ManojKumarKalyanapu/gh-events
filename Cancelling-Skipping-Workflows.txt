@@ -1,0 +1,73 @@
+1. Cancelling Workflows
+
+A. Manual Cancellation
+You can manually cancel a running workflow from the GitHub Actions tab:
+Actions → Click on a running workflow → “Cancel workflow” button.
+
+B. Auto-Cancel Previous Runs
+Use the concurrency key to cancel in-progress workflows for the same branch or key.
+example:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+| Key                  | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `group`              | A unique identifier (often workflow + branch).         |
+| `cancel-in-progress` | Automatically cancels previous runs in the same group. |
+
+
+2. Skipping Workflows
+A. Using Git Commit Message
+If your commit message includes the text:
+[skip ci]
+
+or 
+
+[ci skip]
+
+GitHub will not run the workflow.
+Works only with events like push.
+
+B. Using Conditional Logic with if:
+Skip jobs or steps based on condition.
+
+example:
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+
+or 
+
+if: contains(github.event.head_commit.message, '[skip deploy]')
+
+C. Use Inputs to Skip in workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      run-deploy:
+        description: 'Run deployment?'
+        required: true
+        default: 'yes'
+
+jobs:
+  deploy:
+    if: ${{ github.event.inputs.run-deploy == 'yes' }}
+
+D. Skip Based on File Changes (paths-ignore)
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+Skips workflow if only those files change.
+
+summary table
+| Feature                      | How It Works                       | Use Case                       |
+| ---------------------------- | ---------------------------------- | ------------------------------ |
+| Manual Cancel                | From Actions tab                   | Stop a running workflow        |
+| `concurrency`                | Auto-cancels in-progress workflows | Avoid duplicated runs          |
+| `[skip ci]`                  | Skip workflow by commit message    | No CI run needed               |
+| `if:` condition              | Control job/step execution         | Conditional logic              |
+| `paths-ignore`               | Skip based on changed files        | Only trigger on relevant files |
+| `workflow_dispatch` + inputs | Let user decide to run/skip        | Manual skip via input form     |
