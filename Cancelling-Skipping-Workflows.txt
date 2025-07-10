@@ -11,9 +11,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-Key	Description
-group: A unique identifier (often workflow + branch).
-cancel-in-progress: Automatically cancels previous runs in the same group.
+| Key                  | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `group`              | A unique identifier (often workflow + branch).         |
+| `cancel-in-progress` | Automatically cancels previous runs in the same group. |
 
 
 2. Skipping Workflows
